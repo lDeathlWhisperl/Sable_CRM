@@ -1,0 +1,23 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS Roles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role TEXT UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Users
+(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	login TEXT UNIQUE NOT NULL,
+	password_hash TEXT NOT NULL,
+	role_id INTEGER NOT NULL,
+    FOREIGN KEY(role_id) REFERENCES roles(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+INSERT OR IGNORE INTO Roles (role)
+VALUES ('Admin');
+
+INSERT OR IGNORE INTO Users (login, password_hash, role_id) 
+VALUES ('Admin', '$2a$12$PoZpGMeDO.4UzW/3DjTCn.qpxcjtYaQsAq86BlN.6FrHhUd8Hnij6', 1);

@@ -1,13 +1,24 @@
 import QtQuick
 import QtQuick.Controls.Basic
 
-import loginvalidator
+import "Components"
+import authorization
 
 Window
 {
     id: root
     width: 610
     height: 725
+
+    readonly property string res: "qrc:/qt/qml/Sable_CRM/resources/"
+    property color le_bgColor: "#f9f9fb"
+    property color le_borderColor: "#f0f0f3"
+    property color le_borderColor_hovered: "#68b4f0"
+    property Gradient gradient: Gradient
+    {
+        GradientStop { position: 0.0; color: "#68b4f0" }
+        GradientStop { position: 1.0; color: "#3797e9" }
+    }
 
     maximumWidth:  width
     minimumWidth:  width
@@ -17,8 +28,8 @@ Window
     visible: true
     title:   "Sable"
 
-    FontLoader { source: "resources/fonts/Montserrat-Regular.ttf" }
-    FontLoader { source: "resources/fonts/Montserrat-Bold.ttf" }
+    FontLoader { source: res + "fonts/Montserrat-Regular.ttf" }
+    FontLoader { source: res + "fonts/Montserrat-Bold.ttf" }
 
     Item
     {
@@ -35,16 +46,12 @@ Window
             anchors.left:  parent.left
             anchors.right: parent.right
 
-            gradient: Gradient
-            {
-                GradientStop { position: 0.0; color: "#94ccf3" }
-                GradientStop { position: 1.0; color: "#65afed" }
-            }
+            gradient: root.gradient
 
             Image
             {
                 id: logo
-                source: "resources/images/Logo.png"
+                source: res + "images/Logo.png"
                 width:  64
                 height: 80
 
@@ -106,14 +113,14 @@ Window
 
                 placeholder: "Login"
 
-                bgColor:     "#f9f9fb"
-                borderColor: "#f0f0f3"
-                borderColor_hovered: "#68b4f0"
+                bgColor:     le_bgColor
+                borderColor: le_borderColor
+                borderColor_hovered: le_borderColor_hovered
 
                 fontFamily: "Montserrat"
                 fontSize:   20
 
-                imgSource: "resources/images/user_circle.svg"
+                imgSource: res + "images/user_circle.svg"
                 imgWidth:  30
                 imgHeight: imgWidth
             }
@@ -122,8 +129,8 @@ Window
             {
                 id: password
 
-                property url eye_open:   "resources/images/eye_circle.svg"
-                property url eye_closed: "resources/images/eye_slash_circle.svg"
+                property url eye_open:   res + "images/eye_circle.svg"
+                property url eye_closed: res + "images/eye_slash_circle.svg"
 
                 width:  470
                 height: 70
@@ -131,14 +138,14 @@ Window
 
                 placeholder: "Password"
 
-                bgColor:     "#f9f9fb"
-                borderColor: "#f0f0f3"
-                borderColor_hovered: "#68b4f0"
+                bgColor:     le_bgColor
+                borderColor: le_borderColor
+                borderColor_hovered: le_borderColor_hovered
 
                 fontFamily: "Montserrat"
                 fontSize:   20
 
-                imgSource: "resources/images/lock_circle.svg"
+                imgSource: res + "images/lock_circle.svg"
                 imgWidth:  30
                 imgHeight: imgWidth
 
@@ -182,42 +189,46 @@ Window
                 textColor:  "white"
                 fontSize:   20
 
-                bgGradient: Gradient
+                bgGradient: gradient
+
+                Authorization
                 {
-                    GradientStop { position: 0.0; color: "#68b4f0" }
-                    GradientStop { position: 1.0; color: "#3797e9" }
-                }
-
-                LoginValidator { id: validator }
-                onPressed:
-                {
-                    validator.validate(login.inputText, password.inputText)
-                    authError.msgText = ""
-
-                    if(!validator.isLoginValid || !validator.isPasswordValid)
-                        authError.msgText = "Некорректрый логин или пароль"
-
-                    if(!validator.isLoginValid)
+                    id: auth
+                    onInvalidLogin:
                     {
                         login.borderColor = "red"
-                        login.borderWidth = 2
-                    }
-                    else
-                    {
-                        login.borderColor = "#f0f0f3"
-                        login.borderWidth = 1
+                        authError.msgText = "Не верный логин или пароль"
                     }
 
-                    if(!validator.isPasswordValid)
+                    onValidLogin:
+                    {
+                        login.borderColor = le_borderColor
+                    }
+
+                    onInvalidPassword:
                     {
                         password.borderColor = "red"
-                        password.borderWidth = 2
+                        authError.msgText = "Не верный логин или пароль"
                     }
-                    else
+
+                    onValidPassword:
                     {
-                        password.borderColor = "#f0f0f3"
-                        password.borderWidth = 1
+                        password.borderColor = le_borderColor
                     }
+
+                    onUserNotFound:
+                    {
+                        authError.msgText = "Пользователь не найден"
+                    }
+
+                    onSuccess:
+                    {
+                        authError.msgText = ""
+                    }
+                }
+                onPressed:
+                {
+                    auth.authorize(login.inputText, password.inputText);
                 }
 
                 ErrorMessage

@@ -4,7 +4,7 @@ project(Sable_CRM VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Svg)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Svg Sql)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 
 qt_standard_project_setup(REQUIRES 6.8)
@@ -15,6 +15,8 @@ qt_add_executable(appSable_CRM
 
 target_include_directories(appSable_CRM PRIVATE
     external
+    View
+    View/Components
 )
 
 target_sources(appSable_CRM PRIVATE
@@ -28,11 +30,12 @@ target_sources(appSable_CRM PRIVATE
 qt_add_qml_module(appSable_CRM
     URI Sable_CRM
     VERSION 1.0
+
     QML_FILES
-        Authorization.qml
-        LineEdit.qml
-        PushButton.qml
-        ErrorMessage.qml
+        View/Authorization.qml
+        View/Components/LineEdit.qml
+        View/Components/PushButton.qml
+        View/Components/ErrorMessage.qml
 
     RESOURCES
         resources/fonts/Montserrat-Regular.ttf
@@ -49,10 +52,18 @@ qt_add_qml_module(appSable_CRM
         resources/images/Logo.png
         resources/images/Logo_alt.png
         resources/images/attention.svg
+        resources/DB/Script.sql
 
     SOURCES
         loginvalidator.h
         loginvalidator.cpp
+        databasemanager.h
+        databasemanager.cpp
+        userrepository.h
+        userrepository.cpp
+        authservice.h
+        authservice.cpp
+        SOURCES authviewmodel.h authviewmodel.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -66,9 +77,9 @@ set_target_properties(appSable_CRM PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appSable_CRM
-    PRIVATE Qt6::Quick
-)
+target_link_libraries(appSable_CRM PRIVATE Qt6::Quick)
+target_link_libraries(appSable_CRM PRIVATE Qt6::Core)
+target_link_libraries(appSable_CRM PRIVATE Qt6::Sql)
 target_link_libraries(appSable_CRM PRIVATE Qt6::Core)
 
 include(GNUInstallDirs)

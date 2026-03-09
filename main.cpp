@@ -1,13 +1,27 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QSqlQuery>
 
-#include "loginvalidator.h"
+#include "databasemanager.h"
+#include "authviewmodel.h"
+
+// #include "qtbcrypt.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<LogInValidator>("loginvalidator", 1, 0,"LoginValidator");
+    QCoreApplication::setOrganizationName("SabelSoft");
+    QCoreApplication::setApplicationName("Sabel");
+
+    DatabaseManager dbm;
+    dbm.init();
+
+    // QString salt = QtBCrypt::generateSalt();
+    // QString hash = QtBCrypt::hashPassword("Admin_#1", salt);
+    // qDebug() << hash;
+
+    qmlRegisterType<AuthViewModel>("authorization", 1, 0,"Authorization");
 
     QQmlApplicationEngine engine;
     QObject::connect(
