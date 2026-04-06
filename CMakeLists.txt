@@ -15,8 +15,7 @@ qt_add_executable(appSable_CRM
 
 target_include_directories(appSable_CRM PRIVATE
     external
-    View
-    View/Components
+    Repository
 )
 
 target_sources(appSable_CRM PRIVATE
@@ -38,32 +37,32 @@ qt_add_qml_module(appSable_CRM
         View/Components/ErrorMessage.qml
 
     RESOURCES
-        resources/fonts/Montserrat-Regular.ttf
-        resources/fonts/Montserrat-Bold.ttf
-        resources/fonts/Montserrat-SemiBold.ttf
-        resources/images/lock.svg
-        resources/images/user.svg
-        resources/images/eye.svg
-        resources/images/eye_slash.svg
-        resources/images/lock_circle.svg
-        resources/images/user_circle.svg
-        resources/images/eye_circle.svg
-        resources/images/eye_slash_circle.svg
-        resources/images/Logo.png
-        resources/images/Logo_alt.png
-        resources/images/attention.svg
-        resources/DB/Script.sql
+        Resources/fonts/Montserrat-Regular.ttf
+        Resources/fonts/Montserrat-Bold.ttf
+        Resources/fonts/Montserrat-SemiBold.ttf
+        Resources/images/lock.svg
+        Resources/images/user.svg
+        Resources/images/eye.svg
+        Resources/images/eye_slash.svg
+        Resources/images/lock_circle.svg
+        Resources/images/user_circle.svg
+        Resources/images/eye_circle.svg
+        Resources/images/eye_slash_circle.svg
+        Resources/images/Logo.png
+        Resources/images/Logo_alt.png
+        Resources/images/attention.svg
+        Resources/DB/Script.sql
 
     SOURCES
-        loginvalidator.h
-        loginvalidator.cpp
-        databasemanager.h
-        databasemanager.cpp
-        userrepository.h
-        userrepository.cpp
-        authservice.h
-        authservice.cpp
-        SOURCES authviewmodel.h authviewmodel.cpp
+        loginvalidator.h loginvalidator.cpp
+        databasemanager.h databasemanager.cpp
+        authservice.h authservice.cpp
+        authviewmodel.h authviewmodel.cpp
+        Repository/userrepository.h Repository/userrepository.cpp
+        Repository/clientsrepository.h Repository/clientsrepository.cpp
+        Repository/tasksrepository.h Repository/tasksrepository.cpp
+        Repository/dealsrepository.h Repository/dealsrepository.cpp
+        Repository/sessionsrepository.h Repository/sessionsrepository.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

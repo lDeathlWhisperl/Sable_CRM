@@ -5,21 +5,15 @@
 #include "databasemanager.h"
 #include "authviewmodel.h"
 
-// #include "qtbcrypt.h"
-
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    QCoreApplication::setOrganizationName("SabelSoft");
-    QCoreApplication::setApplicationName("Sabel");
+    QCoreApplication::setOrganizationName("SableSoft");
+    QCoreApplication::setApplicationName("Sable");
 
     DatabaseManager dbm;
     dbm.init();
-
-    // QString salt = QtBCrypt::generateSalt();
-    // QString hash = QtBCrypt::hashPassword("Admin_#1", salt);
-    // qDebug() << hash;
 
     qmlRegisterType<AuthViewModel>("authorization", 1, 0,"Authorization");
 
