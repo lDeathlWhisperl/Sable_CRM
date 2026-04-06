@@ -11,7 +11,7 @@ Row
     property alias msgFontFamily: msg.font.family
 
     property int picSize: pic.width
-    property url picSource: "qrc:/qt/qml/Sable_CRM/resources/images/attention.svg"
+    property url picSource: "qrc:/qt/qml/Sable_CRM/Resources/images/attention.svg"
     property color msgColor: "red"
 
     Image
