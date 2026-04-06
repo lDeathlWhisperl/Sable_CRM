@@ -1,7 +1,7 @@
 #include "authservice.h"
-#include "databasemanager.h"
-
 #include "qtbcrypt.h"
+
+#include <QSettings>
 
 AuthService::AuthService(QObject *parent)
     : QObject(parent)
@@ -10,6 +10,8 @@ AuthService::AuthService(QObject *parent)
     QObject::connect(&logVal, &LogInValidator::invalidPassword, this, &AuthService::invalidPassword);
     QObject::connect(&logVal, &LogInValidator::validLogin, this, &AuthService::validLogin);
     QObject::connect(&logVal, &LogInValidator::validPassword, this, &AuthService::validPassword);
+
+    QObject::connect(&session, &SessionsRepository::token_expired, this, &AuthService::tokenAuth_expired);
 }
 
 std::optional<User> AuthService::authorize(const QString& login, const QString& password)
@@ -19,8 +21,7 @@ std::optional<User> AuthService::authorize(const QString& login, const QString& 
     if(!logVal.val_res.loginValid || !logVal.val_res.passwordValid)
         return std::nullopt;
 
-    DatabaseManager dbm;
-    UserRepository repo(&dbm);
+    UserRepository repo;
     std::optional<User> user = repo.getUserByLogin(login);
 
     if(!user)
@@ -41,5 +42,32 @@ std::optional<User> AuthService::authorize(const QString& login, const QString& 
 
     qDebug() << "Успешная авторизация";
     emit success();
+
+    session.createSession(user->id);
     return user;
+}
+
+std::optional<User> AuthService::restoreSession()
+{
+    session.deleteExpired();
+
+    if(QPair<bool, int> p = session.findByToken(); p.first)
+    {
+        qDebug() << "Session restored";
+        emit success();
+
+        UserRepository repo;
+        std::optional<User> user = repo.getUserById(p.second);
+        emit tokenAuth_success();
+
+        return user;
+    }
+
+    return std::nullopt;
+}
+
+void AuthService::logoff()
+{
+    session.deleteSession();
+    emit logout();
 }

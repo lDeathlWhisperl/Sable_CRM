@@ -5,13 +5,13 @@
 
 class DatabaseManager
 {
-    QSqlDatabase db;
+    static QSqlDatabase db;
 
 public:
     explicit DatabaseManager();
 
     bool init();
-    QSqlDatabase database() const;
+    static QSqlDatabase database();
 
     ~DatabaseManager()
     {

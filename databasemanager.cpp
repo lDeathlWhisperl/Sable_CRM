@@ -6,9 +6,11 @@
 #include <QFile>
 #include <QDir>
 
+QSqlDatabase DatabaseManager::db;
+
 DatabaseManager::DatabaseManager()
 {
-
+    db.open();
 }
 
 bool DatabaseManager::init()
@@ -19,7 +21,7 @@ bool DatabaseManager::init()
     return createTables();
 }
 
-QSqlDatabase DatabaseManager::database() const
+QSqlDatabase DatabaseManager::database()
 {
     return db;
 }
@@ -39,7 +41,7 @@ bool DatabaseManager::open()
 
 bool DatabaseManager::createTables()
 {
-    return runScript(":/qt/qml/Sable_CRM/resources/DB/Script.sql");
+    return runScript(":/qt/qml/Sable_CRM/Resources/DB/Script.sql");
 }
 
 bool DatabaseManager::runScript(const QString &path)

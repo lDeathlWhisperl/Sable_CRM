@@ -10,7 +10,7 @@ Window
     width: 610
     height: 725
 
-    readonly property string res: "qrc:/qt/qml/Sable_CRM/resources/"
+    readonly property string res: "qrc:/qt/qml/Sable_CRM/Resources/"
     property color le_bgColor: "#f9f9fb"
     property color le_borderColor: "#f0f0f3"
     property color le_borderColor_hovered: "#68b4f0"
@@ -95,6 +95,8 @@ Window
         Column
         {
             spacing: 10
+
+            Component.onCompleted: auth.restoreSession()
 
             anchors
             {
@@ -194,6 +196,12 @@ Window
                 Authorization
                 {
                     id: auth
+
+                    onTokenAuth_expired:
+                    {
+                        authError.msgText = "Предыдущая сессия завершена, авторизируйтесь заново"
+                    }
+
                     onInvalidLogin:
                     {
                         login.borderColor = "red"
@@ -224,6 +232,9 @@ Window
                     onSuccess:
                     {
                         authError.msgText = ""
+                        login.enabled = false
+                        password.enabled = false
+                        logIn.enabled = false
                     }
                 }
                 onPressed:

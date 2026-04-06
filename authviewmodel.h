@@ -16,14 +16,23 @@ public:
         as.authorize(login, password);
     }
 
+    Q_INVOKABLE void restoreSession()
+    {
+        as.restoreSession();
+    }
+
 signals:
     void invalidPassword();
     void invalidLogin();
     void validPassword();
     void validLogin();
+
     void userNotFound();
     void incorrectData();
     void success();
+    void logout();
+    void tokenAuth_success();
+    void tokenAuth_expired();
 };
 
 #endif // AUTHVIEWMODEL_H
