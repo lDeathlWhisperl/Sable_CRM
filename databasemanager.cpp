@@ -15,8 +15,14 @@ DatabaseManager::DatabaseManager()
 
 bool DatabaseManager::init()
 {
+    qDebug() << "DB path: " << dbPath();
     if(!open())
+    {
+        qDebug() << "DB was not open";
         return false;
+    }
+
+    if(isInit()) return true;
 
     return createTables();
 }
@@ -63,7 +69,7 @@ bool DatabaseManager::runScript(const QString &path)
         QSqlQuery query(db);
         if (!query.exec(stmt))
         {
-            qDebug() << query.lastError().text();
+            qDebug() << "Script: " << query.lastError().text();
             return false;
         }
     }
@@ -77,7 +83,19 @@ QString DatabaseManager::dbPath()
     if(QDir dir; !dir.exists(path))
         dir.mkpath(path);
 
-    qDebug() << "DB path: " << path + "/Sabel.db";
-
     return path + "/Sabel.db";
+}
+
+bool DatabaseManager::isInit()
+{
+    QSqlQuery qu("PRAGMA user_version");
+
+    if (qu.next())
+    {
+        int version = qu.value(0).toInt();
+        qDebug() << "DB version: " << version << "\n Actual version: " << DB_version;
+        if(version == DB_version)
+            return true;
+    }
+    return false;
 }

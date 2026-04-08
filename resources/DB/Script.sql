@@ -1,3 +1,4 @@
+PRAGMA user_version = 1;
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS Sessions
@@ -93,13 +94,22 @@ CREATE TABLE IF NOT EXISTS Status
 	);
 
 INSERT OR IGNORE INTO Roles (role)
-VALUES 	('Admin'), ('Viewer');
+VALUES 	('Admin'), ('Manager'), ('Employee');
 
 INSERT OR IGNORE INTO Users (login, name, password_hash, role_id) 
 VALUES	 ('Admin', 'Ilya', '$2a$12$PoZpGMeDO.4UzW/3DjTCn.qpxcjtYaQsAq86BlN.6FrHhUd8Hnij6', 1);
 
+-- Roles Users Clients Deals Tasks
 INSERT OR IGNORE INTO Permissions(permission)
-VALUES 	('Create'), ('Edit'), ('Delete'), ('View');
+VALUES 	('create_role'),   ('edit_role'),   ('delete_role'),
+		('create_user'),   ('edit_user'),   ('delete_user'),
+		('create_client'), ('edit_client'), ('delete_client'),
+		('create_deal'),   ('edit_deal'),   ('delete_deal'),
+		('create_task'),   ('edit_task'),   ('delete_task');
 
 INSERT OR IGNORE INTO RolePermissions
-VALUES (1, 1), (1, 2), (1, 3), (2, 4);
+VALUES 	(1,  1),  (1,  2),  (1,  3), 
+		(1,  4),  (1,  5),  (1,  6), 
+		(1,  7),  (1,  8),  (1,  9), 
+		(1,  10), (1,  11), (1,  12), 
+		(1,  13), (1,  14), (1, 15);

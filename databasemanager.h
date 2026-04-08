@@ -6,7 +6,7 @@
 class DatabaseManager
 {
     static QSqlDatabase db;
-
+    const int DB_version = 1;
 public:
     explicit DatabaseManager();
 
@@ -22,6 +22,7 @@ private:
     bool createTables();
     bool runScript(const QString& path);
     QString dbPath();
+    bool isInit();
 };
 
 #endif // DATABASEMANAGER_H
