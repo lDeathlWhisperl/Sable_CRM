@@ -7,28 +7,39 @@ CREATE TABLE IF NOT EXISTS Sessions
 		user_id INTEGER NOT NULL,
 		token TEXT UNIQUE NOT NULL,
 		expires_at DATETIME NOT NULL,
+
 		FOREIGN KEY(user_id) REFERENCES Users(id)
 	);
 
 CREATE TABLE IF NOT EXISTS Roles 
 	(
 	    id INTEGER PRIMARY KEY AUTOINCREMENT,
-	    role TEXT UNIQUE NOT NULL
+	    role TEXT UNIQUE NOT NULL,
+	    tag_color TEXT
 	);
 
-CREATE TABLE IF NOT EXISTS Permissions 
+CREATE TABLE IF NOT EXISTS Resources 
 	(
 	    id INTEGER PRIMARY KEY AUTOINCREMENT,
-	    permission TEXT UNIQUE NOT NULL
+	    name TEXT UNIQUE NOT NULL
+	);
+
+CREATE TABLE IF NOT EXISTS AccessLevels 
+	(
+	    id INTEGER PRIMARY KEY,
+	    level TEXT UNIQUE NOT NULL
 	);
 
 CREATE TABLE IF NOT EXISTS RolePermissions 
 	(
-	    role_id INTEGER NOT NULL,
-	    permission_id INTEGER NOT NULL,
-	    PRIMARY KEY(role_id, permission_id),
+	    role_id INTEGER,
+	    resource_id INTEGER,
+	    level_id INTEGER,
+
+	    PRIMARY KEY (role_id, resource_id),
 	    FOREIGN KEY(role_id) REFERENCES Roles(id),
-	    FOREIGN KEY(permission_id) REFERENCES Permissions(id)
+	    FOREIGN KEY(resource_id) REFERENCES Resources(id),
+	    FOREIGN KEY(level_id) REFERENCES AccessLevels(id)
 	);
 
 CREATE TABLE IF NOT EXISTS Users
@@ -38,6 +49,7 @@ CREATE TABLE IF NOT EXISTS Users
 		password_hash TEXT NOT NULL,
 		name TEXT NOT NULL,
 		role_id INTEGER NOT NULL,
+
 	    FOREIGN KEY(role_id) REFERENCES Roles(id)
 	        ON DELETE RESTRICT
 	        ON UPDATE CASCADE
@@ -50,6 +62,7 @@ CREATE TABLE IF NOT EXISTS Clients
 		email TEXT,
 		phone TEXT,
 		communication_id INTEGER NOT NULL,
+
 		FOREIGN KEY(communication_id) REFERENCES Communication(id)
 	);
 
@@ -69,6 +82,7 @@ CREATE TABLE IF NOT EXISTS Deals
 	    description TEXT,
 	    status_id INTEGER,
 	    amount REAL NOT NULL,
+
 	    FOREIGN KEY(client_id)  REFERENCES Clients(id),
 	    FOREIGN KEY(manager_id) REFERENCES Users(id),
 	    FOREIGN KEY(status_id)  REFERENCES Status(id)
@@ -82,6 +96,7 @@ CREATE TABLE IF NOT EXISTS Tasks
 	    deadline DATETIME,
 	    description TEXT,
 	    status_id INTEGER NOT NULL,
+
 	    FOREIGN KEY(client_id)   REFERENCES Clients(id),
 	    FOREIGN KEY(assigned_to) REFERENCES Users(id),
 	    FOREIGN KEY(status_id)   REFERENCES Status(id)
@@ -93,23 +108,22 @@ CREATE TABLE IF NOT EXISTS Status
 		state TEXT UNIQUE NOT NULL
 	);
 
-INSERT OR IGNORE INTO Roles (role)
-VALUES 	('Admin'), ('Manager'), ('Employee');
+INSERT OR IGNORE INTO Roles (role, tag_color)
+VALUES 	('Admin', 'red'), ('Manager', 'blue'), ('Employee', 'green');
 
 INSERT OR IGNORE INTO Users (login, name, password_hash, role_id) 
-VALUES	 ('Admin', 'Ilya', '$2a$12$PoZpGMeDO.4UzW/3DjTCn.qpxcjtYaQsAq86BlN.6FrHhUd8Hnij6', 1);
+VALUES	('Admin', 'Ilya', '$2a$12$PoZpGMeDO.4UzW/3DjTCn.qpxcjtYaQsAq86BlN.6FrHhUd8Hnij6', 1);
 
--- Roles Users Clients Deals Tasks
-INSERT OR IGNORE INTO Permissions(permission)
-VALUES 	('create_role'),   ('edit_role'),   ('delete_role'),
-		('create_user'),   ('edit_user'),   ('delete_user'),
-		('create_client'), ('edit_client'), ('delete_client'),
-		('create_deal'),   ('edit_deal'),   ('delete_deal'),
-		('create_task'),   ('edit_task'),   ('delete_task');
+INSERT OR IGNORE INTO AccessLevels (level)
+VALUES	('forbidden'), ('read'), ('edit');
 
+INSERT OR IGNORE INTO Resources (name)
+VALUES 	('users'), ('roles'), ('clients'), ('deals'), ('tasks');
+
+-- role | res | perm
 INSERT OR IGNORE INTO RolePermissions
-VALUES 	(1,  1),  (1,  2),  (1,  3), 
-		(1,  4),  (1,  5),  (1,  6), 
-		(1,  7),  (1,  8),  (1,  9), 
-		(1,  10), (1,  11), (1,  12), 
-		(1,  13), (1,  14), (1, 15);
+VALUES 	(1, 1, 3),
+		(1, 2, 3),
+		(1, 3, 3),
+		(1, 4, 3),
+		(1, 5, 3);
