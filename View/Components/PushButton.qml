@@ -18,13 +18,15 @@ Item
     property Gradient bgGradient:       null
     property string fontFamily:         ""
     property int fontWeight:            Font.Normal
+    property int colorAnimDur:          0
 
     signal pressed()
+    signal released()
+    signal clicked()
 
     Button
     {
         id: btn
-
         anchors.fill: parent
 
         background: Rectangle
@@ -38,12 +40,12 @@ Item
 
             Behavior on color
             {
-                ColorAnimation { duration: 120 }
+                ColorAnimation { duration: colorAnimDur }
             }
 
             Behavior on border.color
             {
-                ColorAnimation { duration: 120 }
+                ColorAnimation { duration: colorAnimDur }
             }
         }
 
@@ -53,19 +55,23 @@ Item
 
             color:          btn.hovered ? textColor_hovered : textColor
             anchors.fill:   parent
-            font.pixelSize: 14
+            font.pixelSize: fontSize
             font.family:    fontFamily
             font.weight:    fontWeight
 
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment:   Qt.AlignVCenter
 
+            wrapMode: Text.WordWrap
+
             Behavior on color
             {
-                ColorAnimation { duration: 120 }
+                ColorAnimation { duration: colorAnimDur }
             }
         }
 
         onPressed: root.pressed()
+        onReleased: root.released()
+        onClicked: root.clicked()
     }
 }
