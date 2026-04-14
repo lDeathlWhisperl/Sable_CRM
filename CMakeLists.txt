@@ -32,36 +32,46 @@ qt_add_qml_module(appSable_CRM
 
     QML_FILES
         View/Authorization.qml
+        View/Window.qml
+        View/WorkingArea.qml
+
         View/Components/LineEdit.qml
         View/Components/PushButton.qml
         View/Components/ErrorMessage.qml
+        View/Components/MenuBar.qml
+        View/Components/PopupWindow.qml
+
+        View/Categories/Employees.qml
+        View/Categories/Main.qml
+
+        View/Structs/Colors.qml
+        View/Structs/Category.qml
 
     RESOURCES
         Resources/fonts/Montserrat-Regular.ttf
         Resources/fonts/Montserrat-Bold.ttf
         Resources/fonts/Montserrat-SemiBold.ttf
-        Resources/images/lock.svg
-        Resources/images/user.svg
-        Resources/images/eye.svg
-        Resources/images/eye_slash.svg
-        Resources/images/lock_circle.svg
-        Resources/images/user_circle.svg
-        Resources/images/eye_circle.svg
-        Resources/images/eye_slash_circle.svg
+
+        Resources/images/lock.svg       Resources/images/lock_circle.svg
+        Resources/images/user.svg       Resources/images/user_circle.svg
+        Resources/images/eye.svg        Resources/images/eye_circle.svg
+        Resources/images/eye_slash.svg  Resources/images/eye_slash_circle.svg
         Resources/images/Logo.png
         Resources/images/Logo_alt.png
         Resources/images/attention.svg
+
         Resources/DB/Script.sql
 
     SOURCES
-        loginvalidator.h loginvalidator.cpp
-        databasemanager.h databasemanager.cpp
-        authservice.h authservice.cpp
-        authviewmodel.h authviewmodel.cpp
-        Repository/userrepository.h Repository/userrepository.cpp
-        Repository/clientsrepository.h Repository/clientsrepository.cpp
-        Repository/tasksrepository.h Repository/tasksrepository.cpp
-        Repository/dealsrepository.h Repository/dealsrepository.cpp
+        loginvalidator.h                loginvalidator.cpp
+        databasemanager.h               databasemanager.cpp
+        authservice.h                   authservice.cpp
+        authviewmodel.h                 authviewmodel.cpp
+        accessmanager.h                 accessmanager.cpp
+        Repository/userrepository.h     Repository/userrepository.cpp
+        Repository/clientsrepository.h  Repository/clientsrepository.cpp
+        Repository/tasksrepository.h    Repository/tasksrepository.cpp
+        Repository/dealsrepository.h    Repository/dealsrepository.cpp
         Repository/sessionsrepository.h Repository/sessionsrepository.cpp
 )
 

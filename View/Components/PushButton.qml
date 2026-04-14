@@ -1,24 +1,17 @@
 import QtQuick
 import QtQuick.Controls.Basic
 
+import "../Structs"
+
 Item
 {
     id: root
 
     property alias text:     txt.text
-    property alias fontSize: txt.font.pixelSize
     property alias radius:   btn_rect.radius
+    property alias font:     txt.font
 
-    property color textColor:           "black"
-    property color textColor_hovered:   textColor
-    property color bgColor:             "white"
-    property color bgColor_hovered:     bgColor
-    property color borderColor:         "transparent"
-    property color borderColor_hovered: borderColor
-    property Gradient bgGradient:       null
-    property string fontFamily:         ""
-    property int fontWeight:            Font.Normal
-    property int colorAnimDur:          0
+    readonly property Colors colors: Colors {}
 
     signal pressed()
     signal released()
@@ -34,18 +27,18 @@ Item
             id: btn_rect
 
             anchors.fill: parent
-            color:        bgGradient ? "" : (btn.hovered ? bgColor_hovered : bgColor)
-            border.color: btn.hovered ? borderColor_hovered : borderColor
-            gradient:     bgGradient
+            color:        colors.background_gradient ? "" : (btn.hovered ? colors.background_hovered : colors.background)
+            border.color: btn.hovered ? colors.border_hovered : colors.border
+            gradient:     colors.background_gradient
 
             Behavior on color
             {
-                ColorAnimation { duration: colorAnimDur }
+                ColorAnimation { duration: colors.animationDur }
             }
 
             Behavior on border.color
             {
-                ColorAnimation { duration: colorAnimDur }
+                ColorAnimation { duration: colors.animationDur }
             }
         }
 
@@ -53,11 +46,8 @@ Item
         {
             id: txt
 
-            color:          btn.hovered ? textColor_hovered : textColor
+            color:          btn.hovered ? colors.text_hovered : colors.text
             anchors.fill:   parent
-            font.pixelSize: fontSize
-            font.family:    fontFamily
-            font.weight:    fontWeight
 
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment:   Qt.AlignVCenter
@@ -66,7 +56,7 @@ Item
 
             Behavior on color
             {
-                ColorAnimation { duration: colorAnimDur }
+                ColorAnimation { duration: colors.animationDur }
             }
         }
 

@@ -2,13 +2,8 @@ import QtQuick
 
 Row
 {
-    id: row
-
-    property alias spacing: row.spacing
-    property alias msgText: msg.text
-    property alias msgFontSize:   msg.font.pixelSize
-    property alias msgFontWeight: msg.font.weight
-    property alias msgFontFamily: msg.font.family
+    property alias text: msg.text
+    property alias font: msg.font
 
     property int picSize: pic.width
     property url picSource: "qrc:/qt/qml/Sable_CRM/Resources/images/attention.svg"

@@ -2,9 +2,10 @@ import QtQuick
 import QtQuick.Controls.Basic
 
 import "Components"
-import authorization
 
-Window
+import App.auth
+
+Popup
 {
     id: root
     width: 610
@@ -12,7 +13,8 @@ Window
 
     readonly property string res: "qrc:/qt/qml/Sable_CRM/Resources/"
     property color le_bgColor: "#f9f9fb"
-    property color le_borderColor: "#f0f0f3"
+    property color le_bgColor_disabled: "#325664"
+    property color le_borderColor: "#e1e2e9"
     property color le_borderColor_hovered: "#68b4f0"
     property Gradient gradient: Gradient
     {
@@ -20,16 +22,70 @@ Window
         GradientStop { position: 1.0; color: "#3797e9" }
     }
 
-    maximumWidth:  width
-    minimumWidth:  width
-    maximumHeight: height
-    minimumHeight: height
-
-    visible: true
-    title:   "Sable"
+    modal: true
+    closePolicy: Popup.NoAutoClose
 
     FontLoader { source: res + "fonts/Montserrat-Regular.ttf" }
     FontLoader { source: res + "fonts/Montserrat-Bold.ttf" }
+
+    background: Rectangle
+    {
+        anchors.fill: parent
+        radius: 10
+        color: "#f4f5fa"
+    }
+
+    Connections
+    {
+        target: AuthManager
+
+        function onTokenAuth_expired()
+        {
+            authError.text = "Предыдущая сессия завершена, авторизируйтесь заново"
+        }
+
+        function onInvalidLogin()
+        {
+            login.colors.border = "red"
+            authError.text = "Не верный логин или пароль"
+        }
+
+        function onValidLogin()
+        {
+            login.colors.border = le_borderColor
+        }
+
+        function onInvalidPassword()
+        {
+            password.colors.border = "red"
+            authError.text = "Не верный логин или пароль"
+        }
+
+        function onValidPassword()
+        {
+            password.colors.border = le_borderColor
+        }
+
+        function onUserNotFound()
+        {
+            authError.text = "Пользователь не найден"
+        }
+
+        function onSuccess()
+        {
+            authError.text = ""
+            login.enabled = false
+            password.enabled = false
+            logIn.enabled = false
+        }
+
+        function onLogout()
+        {
+            login.enabled = true
+            password.enabled = true
+            logIn.enabled = true
+        }
+    }
 
     Item
     {
@@ -39,8 +95,9 @@ Window
             id: header
 
             height: 190
-            bottomLeftRadius: 10
-            bottomRightRadius: 10
+            radius: 10
+            // bottomLeftRadius: 10
+            // bottomRightRadius: 10
 
             anchors.top:   parent.top
             anchors.left:  parent.left
@@ -95,8 +152,7 @@ Window
         Column
         {
             spacing: 10
-
-            Component.onCompleted: auth.restoreSession()
+            Component.onCompleted: AuthManager.restoreSession()
 
             anchors
             {
@@ -115,12 +171,12 @@ Window
 
                 placeholder: "Login"
 
-                bgColor:     le_bgColor
-                borderColor: le_borderColor
-                borderColor_hovered: le_borderColor_hovered
+                colors.background:     enabled ? le_bgColor : le_bgColor_disabled
+                colors.border: le_borderColor
+                colors.border_hovered: le_borderColor_hovered
 
-                fontFamily: "Montserrat"
-                fontSize:   20
+                font.family: "Montserrat"
+                font.pixelSize:   20
 
                 imgSource: res + "images/user_circle.svg"
                 imgWidth:  30
@@ -140,12 +196,12 @@ Window
 
                 placeholder: "Password"
 
-                bgColor:     le_bgColor
-                borderColor: le_borderColor
-                borderColor_hovered: le_borderColor_hovered
+                colors.background:     enabled ? le_bgColor : le_bgColor_disabled
+                colors.border: le_borderColor
+                colors.border_hovered: le_borderColor_hovered
 
-                fontFamily: "Montserrat"
-                fontSize:   20
+                font.family: "Montserrat"
+                font.pixelSize:   20
 
                 imgSource: res + "images/lock_circle.svg"
                 imgWidth:  30
@@ -183,75 +239,31 @@ Window
                 height: 70
                 radius: 10
 
-                textColor_hovered:   "#324564"
-                borderColor_hovered: "#324564"
+                colors.text_hovered:   enabled ? "#324564" : "white"
+                colors.border_hovered: enabled ? "#324564" : "transparent"
                 text:       "Log In"
-                fontFamily: "Montserrat"
-                fontWeight: Font.Bold
-                textColor:  "white"
-                fontSize:   20
+                font.bold:  true
+                colors.text:  "white"
+                font.pixelSize: 20
+                colors.animationDur: 120
 
-                bgGradient: gradient
+                colors.background_gradient: gradient
 
-                Authorization
-                {
-                    id: auth
-
-                    onTokenAuth_expired:
-                    {
-                        authError.msgText = "Предыдущая сессия завершена, авторизируйтесь заново"
-                    }
-
-                    onInvalidLogin:
-                    {
-                        login.borderColor = "red"
-                        authError.msgText = "Не верный логин или пароль"
-                    }
-
-                    onValidLogin:
-                    {
-                        login.borderColor = le_borderColor
-                    }
-
-                    onInvalidPassword:
-                    {
-                        password.borderColor = "red"
-                        authError.msgText = "Не верный логин или пароль"
-                    }
-
-                    onValidPassword:
-                    {
-                        password.borderColor = le_borderColor
-                    }
-
-                    onUserNotFound:
-                    {
-                        authError.msgText = "Пользователь не найден"
-                    }
-
-                    onSuccess:
-                    {
-                        authError.msgText = ""
-                        login.enabled = false
-                        password.enabled = false
-                        logIn.enabled = false
-                    }
-                }
                 onPressed:
                 {
-                    auth.authorize(login.inputText, password.inputText);
+                    AuthManager.authorize(login.inputText, password.inputText)
                 }
 
                 ErrorMessage
                 {
                     id: authError
-                    visible: msgText !== ""
+                    visible: text !== ""
                     spacing: 10
 
                     picSize: 20
-                    msgFontSize: 14
-                    msgFontFamily: "Montserrat"
-                    msgFontWeight: Font.Bold
+                    font.pixelSize: 14
+                    font.family: "Montserrat"
+                    font.weight: Font.Bold
 
                     anchors.topMargin: 5
                     anchors.top: parent.bottom

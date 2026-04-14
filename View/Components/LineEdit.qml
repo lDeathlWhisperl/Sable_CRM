@@ -1,22 +1,25 @@
 import QtQuick
 import QtQuick.Controls.Basic
 
+import "../Structs"
+
 Item
 {
     id: root
 
     property alias placeholder: field.placeholderText
-    property alias fontSize:    field.font.pixelSize
     property alias radius:      f_rect.radius
-
-    property color borderColor:         "black"
-    property color borderColor_hovered: borderColor
-    property color bgColor:             "white"
-    property color bgColor_hovered:     bgColor
     property int   borderWidth:         1
 
-    property string fontFamily: ""
-    property int    fontWeight: Font.Normal
+    property alias font: field.font
+
+    readonly property Colors colors: Colors
+    {
+        border: "black"
+        border_hovered: border
+        background: "white"
+        background_hovered: background
+    }
 
     property url imgSource: ""
     property int imgWidth
@@ -37,16 +40,16 @@ Item
         anchors.fill:   parent
 
         font.pixelSize: 14
-        font.family:    fontFamily
-        font.weight:    fontWeight
+        font.family:    font.family
+        font.weight:    font.weight
 
         background: Rectangle
         {
             id:           f_rect
             anchors.fill: parent
-            border.color: field.hovered ? borderColor_hovered : borderColor
+            border.color: field.hovered ? colors.border_hovered : colors.border
             border.width: borderWidth
-            color:        field.hovered ? bgColor_hovered : bgColor
+            color:        field.hovered ? colors.background_hovered : colors.background
 
             Behavior on color
             {
