@@ -34,6 +34,7 @@ qt_add_qml_module(appSable_CRM
         View/Authorization.qml
         View/Window.qml
         View/WorkingArea.qml
+        View/Theme.qml
 
         View/Components/LineEdit.qml
         View/Components/PushButton.qml
