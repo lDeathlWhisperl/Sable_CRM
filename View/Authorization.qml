@@ -1,7 +1,9 @@
 import QtQuick
 import QtQuick.Controls.Basic
+import QtQuick.Layouts
 
 import "Components"
+import Theme
 
 import App.auth
 
@@ -11,28 +13,30 @@ Popup
     width: 610
     height: 725
 
-    readonly property string res: "qrc:/qt/qml/Sable_CRM/Resources/"
-    property color le_bgColor: "#f9f9fb"
-    property color le_bgColor_disabled: "#325664"
-    property color le_borderColor: "#e1e2e9"
-    property color le_borderColor_hovered: "#68b4f0"
-    property Gradient gradient: Gradient
-    {
-        GradientStop { position: 0.0; color: "#68b4f0" }
-        GradientStop { position: 1.0; color: "#3797e9" }
-    }
+    property color le_bgColor: Theme.palette.surface
+    property color le_bgColor_disabled: Theme.palette.text.alter
+    property color le_borderColor: Theme.palette.border.primary
+    property color le_borderColor_hovered: Theme.palette.gradient.start
 
     modal: true
     closePolicy: Popup.NoAutoClose
 
-    FontLoader { source: res + "fonts/Montserrat-Regular.ttf" }
-    FontLoader { source: res + "fonts/Montserrat-Bold.ttf" }
+    FontLoader { source: "qrc:/qt/qml/Sable_CRM/Resources/fonts/Montserrat-Regular.ttf" }
+    FontLoader { source: "qrc:/qt/qml/Sable_CRM/Resources/fonts/Montserrat-Bold.ttf"    }
 
     background: Rectangle
     {
         anchors.fill: parent
         radius: 10
-        color: "#f4f5fa"
+        color: Theme.palette.background
+        opacity: 0.2
+    }
+
+    Rectangle
+    {
+        anchors.fill: parent
+        radius: 10
+        color: Theme.palette.background
     }
 
     Connections
@@ -47,6 +51,7 @@ Popup
         function onInvalidLogin()
         {
             login.colors.border = "red"
+            password.colors.border = "red"
             authError.text = "Не верный логин или пароль"
         }
 
@@ -57,6 +62,7 @@ Popup
 
         function onInvalidPassword()
         {
+            login.colors.border = "red"
             password.colors.border = "red"
             authError.text = "Не верный логин или пароль"
         }
@@ -69,6 +75,13 @@ Popup
         function onUserNotFound()
         {
             authError.text = "Пользователь не найден"
+        }
+
+        function onIncorrectData()
+        {
+            login.colors.border = "red"
+            password.colors.border = "red"
+            authError.text = "Не верный логин или пароль"
         }
 
         function onSuccess()
@@ -87,28 +100,28 @@ Popup
         }
     }
 
-    Item
+    ColumnLayout
     {
         anchors.fill: parent
+        Component.onCompleted: AuthManager.restoreSession()
+
+        // Header
         Rectangle
         {
-            id: header
-
             height: 190
             radius: 10
-            // bottomLeftRadius: 10
-            // bottomRightRadius: 10
+            Layout.fillWidth: true
 
-            anchors.top:   parent.top
-            anchors.left:  parent.left
-            anchors.right: parent.right
-
-            gradient: root.gradient
+            gradient: Gradient
+            {
+                GradientStop { position: 0.0; color: Theme.palette.gradient.start }
+                GradientStop { position: 1.0; color: Theme.palette.gradient.end   }
+            }
 
             Image
             {
                 id: logo
-                source: res + "images/Logo.png"
+                source: Theme.palette.icon.logo
                 width:  64
                 height: 80
 
@@ -127,17 +140,15 @@ Popup
                 anchors.leftMargin: 10
 
                 font.pixelSize: 48
-                font.family:    "Montserrat"
                 font.weight:    Font.Bold
 
-                color: "#324564"
+                color: Theme.palette.text.alter
             }
 
             Text
             {
                 text: "CRM SYSTEM"
 
-                font.family: "Montserrat"
                 font.weight: Font.Bold
                 font.pixelSize: 18
                 color: "white"
@@ -149,127 +160,130 @@ Popup
             }
         }
 
-        Column
+        Item { Layout.fillHeight: true }
+
+        LineEdit
         {
-            spacing: 10
-            Component.onCompleted: AuthManager.restoreSession()
+            id: login
 
-            anchors
+            Layout.fillWidth: true
+            Layout.leftMargin: 50
+            Layout.rightMargin: 50
+            Layout.minimumHeight: 70
+
+            radius: 10
+
+            placeholderText: "Login"
+
+            colors.background: enabled ? le_bgColor : le_bgColor_disabled
+            colors.border: le_borderColor
+            colors.border_hovered: le_borderColor_hovered
+
+            font.pixelSize: 20
+
+            imgSource: Theme.palette.icon.user_circle
+            imgWidth:  30
+            imgHeight: imgWidth
+        }
+
+        LineEdit
+        {
+            id: password
+
+            property url eye_open:   Theme.palette.icon.eye_circle
+            property url eye_closed: Theme.palette.icon.eye_slash_circle
+
+            radius: 10
+            Layout.fillWidth: true
+            Layout.leftMargin: 50
+            Layout.rightMargin: 50
+            Layout.minimumHeight: 70
+
+            placeholderText: "Password"
+
+            colors.background: enabled ? le_bgColor : le_bgColor_disabled
+            colors.border: le_borderColor
+            colors.border_hovered: le_borderColor_hovered
+
+            font.pixelSize:   20
+
+            imgSource: Theme.palette.icon.lock_circle
+            imgWidth:  30
+            imgHeight: imgWidth
+
+            echoMode: inputMode.checked ? TextInput.Normal : TextInput.Password
+
+            Button
             {
-                top: header.bottom
-                topMargin: 100
-                horizontalCenter: parent.horizontalCenter
-            }
+                id: inputMode
 
-            LineEdit
-            {
-                id: login
+                width:  password.imgWidth
+                height: password.imgWidth
 
-                width:  470
-                height: 70
-                radius: 10
+                focusPolicy: Qt.NoFocus;
+                checkable: true
 
-                placeholder: "Login"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 20
 
-                colors.background:     enabled ? le_bgColor : le_bgColor_disabled
-                colors.border: le_borderColor
-                colors.border_hovered: le_borderColor_hovered
-
-                font.family: "Montserrat"
-                font.pixelSize:   20
-
-                imgSource: res + "images/user_circle.svg"
-                imgWidth:  30
-                imgHeight: imgWidth
-            }
-
-            LineEdit
-            {
-                id: password
-
-                property url eye_open:   res + "images/eye_circle.svg"
-                property url eye_closed: res + "images/eye_slash_circle.svg"
-
-                width:  470
-                height: 70
-                radius: 10
-
-                placeholder: "Password"
-
-                colors.background:     enabled ? le_bgColor : le_bgColor_disabled
-                colors.border: le_borderColor
-                colors.border_hovered: le_borderColor_hovered
-
-                font.family: "Montserrat"
-                font.pixelSize:   20
-
-                imgSource: res + "images/lock_circle.svg"
-                imgWidth:  30
-                imgHeight: imgWidth
-
-                mode: inputMode.checked ? TextInput.Normal : TextInput.Password
-
-                Button
+                background: Image
                 {
-                    id: inputMode
-
-                    width:  password.imgWidth
-                    height: password.imgWidth
-
-                    focusPolicy: Qt.NoFocus;
-                    checkable: true
-
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: 20
-
-                    background: Image
-                    {
-                        anchors.fill: parent
-                        source: parent.checked ? password.eye_open : password.eye_closed
-                    }
-                }
-            }
-
-            PushButton
-            {
-                id: logIn
-
-                width:  470
-                height: 70
-                radius: 10
-
-                colors.text_hovered:   enabled ? "#324564" : "white"
-                colors.border_hovered: enabled ? "#324564" : "transparent"
-                text:       "Log In"
-                font.bold:  true
-                colors.text:  "white"
-                font.pixelSize: 20
-                colors.animationDur: 120
-
-                colors.background_gradient: gradient
-
-                onPressed:
-                {
-                    AuthManager.authorize(login.inputText, password.inputText)
-                }
-
-                ErrorMessage
-                {
-                    id: authError
-                    visible: text !== ""
-                    spacing: 10
-
-                    picSize: 20
-                    font.pixelSize: 14
-                    font.family: "Montserrat"
-                    font.weight: Font.Bold
-
-                    anchors.topMargin: 5
-                    anchors.top: parent.bottom
+                    anchors.fill: parent
+                    source: parent.checked ? password.eye_open : password.eye_closed
                 }
             }
         }
+
+        PushButton
+        {
+            id: logIn
+
+            radius: 10
+            Layout.fillWidth: true
+            Layout.minimumHeight: 70
+            Layout.leftMargin: 50
+            Layout.rightMargin: 50
+
+            colors.text_hovered:   enabled ? Theme.palette.text.alter : "white"
+            colors.border_hovered: enabled ? Theme.palette.text.alter : "transparent"
+            text: "Log In"
+            font.bold: true
+            colors.text: "white"
+            font.pixelSize: 20
+            colors.animationDur: 120
+
+            colors.background_gradient: Gradient
+            {
+                GradientStop { position: 0.0; color: logIn.hovered ? Theme.palette.gradient.start_hover : Theme.palette.gradient.start }
+                GradientStop { position: 1.0; color: logIn.hovered ? Theme.palette.gradient.end_hover   : Theme.palette.gradient.end   }
+            }
+
+            function authorize()
+            {
+                AuthManager.authorize(login.inputText, password.inputText)
+            }
+
+            onPressed: authorize()
+
+            Message
+            {
+                id: authError
+                visible: text !== ""
+                spacing: 10
+
+                color: "red"
+                picSource: Theme.palette.icon.attention
+                picSize: 20
+                font.pixelSize: 14
+                font.weight: Font.Bold
+
+                anchors.topMargin: 5
+                anchors.top: parent.bottom
+            }
+        }
+
+        Item { Layout.fillHeight: true }
 
         Keys.onPressed: function(event)
         {
@@ -277,8 +291,8 @@ Popup
             {
             case Qt.Key_Enter:
             case Qt.Key_Return:
-                logIn.pressed();
-                break;
+                logIn.authorize()
+                break
             }
         }
     }
