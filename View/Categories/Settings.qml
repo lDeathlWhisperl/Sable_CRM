@@ -66,7 +66,7 @@ Item
                     case model[0]:
                         Theme.current = "light"
                         break
-                    case model [1]:
+                    case model[1]:
                         Theme.current = "dark"
                         break
                     }
