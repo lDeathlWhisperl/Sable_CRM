@@ -53,13 +53,18 @@ qt_add_qml_module(appSable_CRM
         Resources/fonts/Montserrat-Bold.ttf
         Resources/fonts/Montserrat-SemiBold.ttf
 
-        Resources/images/lock.svg       Resources/images/lock_circle.svg
-        Resources/images/user.svg       Resources/images/user_circle.svg
-        Resources/images/eye.svg        Resources/images/eye_circle.svg
-        Resources/images/eye_slash.svg  Resources/images/eye_slash_circle.svg
+        Resources/images/attention.svg
+        Resources/images/light_lock.svg             Resources/images/dark_lock.svg
+        Resources/images/light_lock_circle.svg      Resources/images/dark_lock_circle.svg
+        Resources/images/light_user.svg             Resources/images/dark_user.svg
+        Resources/images/light_user_circle.svg      Resources/images/dark_user_circle.svg
+        Resources/images/light_eye_circle.svg       Resources/images/dark_eye_circle.svg
+        Resources/images/light_eye_slash_circle.svg Resources/images/dark_eye_slash_circle.svg
+        Resources/images/light_check.svg            Resources/images/dark_check.svg
+        Resources/images/light_info.svg             Resources/images/dark_info.svg
+
         Resources/images/Logo.png
         Resources/images/Logo_alt.png
-        Resources/images/attention.svg
 
         Resources/DB/Script.sql
 
