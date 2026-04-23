@@ -44,6 +44,7 @@ qt_add_qml_module(appSable_CRM
 
         View/Categories/Employees.qml
         View/Categories/Main.qml
+        View/Categories/Instruments/AddRole.qml
 
         View/Structs/Colors.qml
         View/Structs/Category.qml
