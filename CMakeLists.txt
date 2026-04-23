@@ -38,7 +38,7 @@ qt_add_qml_module(appSable_CRM
 
         View/Components/LineEdit.qml
         View/Components/PushButton.qml
-        View/Components/ErrorMessage.qml
+        View/Components/Message.qml
         View/Components/MenuBar.qml
         View/Components/PopupWindow.qml
 
