@@ -41,6 +41,11 @@ qt_add_qml_module(appSable_CRM
         View/Components/Message.qml
         View/Components/MenuBar.qml
         View/Components/PopupWindow.qml
+        View/Components/ComboButton.qml
+        View/Components/UserCard.qml
+        View/Components/RoleTag.qml
+        View/Components/Table.qml
+        View/Components/CheckButton.qml
 
         View/Categories/Employees.qml
         View/Categories/Main.qml
@@ -48,6 +53,7 @@ qt_add_qml_module(appSable_CRM
 
         View/Structs/Colors.qml
         View/Structs/Category.qml
+        View/Structs/User.qml
 
     RESOURCES
         Resources/fonts/Montserrat-Regular.ttf

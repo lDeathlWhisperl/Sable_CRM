@@ -2,16 +2,15 @@ import QtQuick
 import QtQuick.Controls.Basic
 
 import "../Structs"
+import Theme
 
-Item
+TextField
 {
-    id: root
+    id: field
+    color: Theme.palette.text.primary
 
-    property alias placeholder: field.placeholderText
-    property alias radius:      f_rect.radius
-    property int   borderWidth:         1
-
-    property alias font: field.font
+    property alias radius: f_rect.radius
+    property int borderWidth: 1
 
     readonly property Colors colors: Colors
     {
@@ -25,56 +24,47 @@ Item
     property int imgWidth
     property int imgHeight
 
-    property int mode: TextInput.Normal
-
     readonly property string inputText: field.text
 
-    TextField
+    echoMode: TextInput.Normal
+
+    placeholderTextColor: Theme.palette.text.placeholder
+
+    leftPadding: imgSource == "" ? 20 : 20 + imgWidth + 20
+
+    font.pixelSize: 14
+
+    background: Rectangle
     {
-        id: field
+        id:           f_rect
+        anchors.fill: parent
+        border.color: field.hovered ? colors.border_hovered : colors.border
+        border.width: borderWidth
+        color:        field.hovered ? colors.background_hovered : colors.background
 
-        echoMode: mode
-
-        leftPadding: imgSource == "" ? 20 : 20 + imgWidth + 20
-
-        anchors.fill:   parent
-
-        font.pixelSize: 14
-        font.family:    font.family
-        font.weight:    font.weight
-
-        background: Rectangle
+        Behavior on color
         {
-            id:           f_rect
-            anchors.fill: parent
-            border.color: field.hovered ? colors.border_hovered : colors.border
-            border.width: borderWidth
-            color:        field.hovered ? colors.background_hovered : colors.background
-
-            Behavior on color
-            {
-                ColorAnimation { duration: 120 }
-            }
-
-            Behavior on border.color
-            {
-                ColorAnimation { duration: 120 }
-            }
+            ColorAnimation { duration: 120 }
         }
 
-        Image
+        Behavior on border.color
         {
-            visible: imgSource !== ""
-            source:  imgSource
-            width:   imgWidth
-            height:  imgHeight
+            ColorAnimation { duration: 120 }
+        }
+    }
 
-            anchors
-            {
-                verticalCenter: field.verticalCenter
-                left: field.left
-                leftMargin: 20
-            }
+    Image
+    {
+        visible: imgSource !== ""
+        source:  imgSource
+        width:   imgWidth
+        height:  imgHeight
+
+        anchors
+        {
+            verticalCenter: field.verticalCenter
+            left: field.left
+            leftMargin: 20
         }
     }
 }
