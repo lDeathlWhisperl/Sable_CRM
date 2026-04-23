@@ -17,12 +17,12 @@ int main(int argc, char *argv[])
     DatabaseManager dbm;
     dbm.init();
 
-    QFont font("Monserrat", 14);
+    QFont font("Montserrat", 14);
     QGuiApplication::setFont(font);
 
     AuthViewModel auth;
     qmlRegisterSingletonInstance("App.auth", 1, 0, "AuthManager", &auth);
-    // qmlRegisterType<AuthViewModel>("authorization", 1, 0,"AuthManager");
+    qmlRegisterSingletonType(QUrl("qrc:/qt/qml/Sable_CRM/View/Theme.qml"), "Theme", 1, 0, "Theme");
 
     QQmlApplicationEngine engine;
     QObject::connect(
