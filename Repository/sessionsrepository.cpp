@@ -1,40 +1,33 @@
 #include "sessionsrepository.h"
-#include "databasemanager.h"
+// #include "databasemanager.h"
 
 #include <QUuid>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QSettings>
 
-Session SessionsRepository::session;
+#include <QCryptographicHash>
 
-SessionsRepository::SessionsRepository(QObject *parent)
-    : QObject(parent)
-{
-    db = DatabaseManager::database();
-}
+SessionsRepository::SessionsRepository(QObject *parent) : QObject(parent) { }
 
 void SessionsRepository::createSession(int userId)
 {
-    QSqlQuery qu(db);
+    QSqlQuery qu;
     qu.prepare("INSERT INTO Sessions (user_id, token, expires_at) "
                "VALUES (:userId, :token, datetime('now', 'localtime', '+7 days'))");
 
-    session =
-    {
-        .user_id = userId,
-        .token = QUuid::createUuid().toString(QUuid::WithoutBraces)
-    };
+    QString token = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    QString hash = QCryptographicHash::hash(token.toUtf8(), QCryptographicHash::Sha256).toHex();
 
-    qu.bindValue(":userId", session.user_id);
-    qu.bindValue(":token", session.token);
+    qu.bindValue(":userId", userId);
+    qu.bindValue(":token", hash);
 
     if(!qu.exec())
         qDebug() << "Session: " << qu.lastError().text();
     else
     {
         QSettings settings;
-        settings.setValue("auth/token", session.token);
+        settings.setValue("auth/token", token);
         qDebug() << "Auth token created";
     }
 }
@@ -45,11 +38,12 @@ QPair<bool, int> SessionsRepository::findByToken()
     QString token = settings.value("auth/token").toString();
     QPair<bool, int> pair;
 
-    QSqlQuery qu(db);
-    qu.prepare("SELECT user_id, token FROM Sessions "
+    QSqlQuery qu;
+    qu.prepare("SELECT user_id FROM Sessions "
                "WHERE token = ?");
 
-    qu.bindValue(0, token);
+    QString hash = QCryptographicHash::hash(token.toUtf8(), QCryptographicHash::Sha256).toHex();
+    qu.bindValue(0, hash);
 
     if(!qu.exec())
     {
@@ -59,18 +53,18 @@ QPair<bool, int> SessionsRepository::findByToken()
     }
 
     if(qu.next())
-        session.user_id = qu.value(0).toInt();
-    else
     {
-        qDebug() << "Authorization token not found";
-        pair.first = false;
+        int user_id = qu.value(0).toInt();
+        pair.first = true;
+        pair.second = user_id;
+
         return pair;
     }
 
-    pair.first = true;
-    pair.second = session.user_id;
-
+    qDebug() << "Authorization token not found";
+    pair.first = false;
     return pair;
+
 }
 
 void SessionsRepository::deleteSession()
@@ -78,11 +72,12 @@ void SessionsRepository::deleteSession()
     QSettings settings;
     QString token = settings.value("auth/token").toString();
 
-    QSqlQuery qu(db);
+    QSqlQuery qu;
     qu.prepare("DELETE FROM Sessions "
                "WHERE token = ?");
 
-    qu.bindValue(0, token);
+    QString hash = QCryptographicHash::hash(token.toUtf8(), QCryptographicHash::Sha256).toHex();
+    qu.bindValue(0, hash);
 
     if(!qu.exec())
         qDebug() << "Session: " << qu.lastError().text();
@@ -90,7 +85,7 @@ void SessionsRepository::deleteSession()
 
 void SessionsRepository::deleteExpired()
 {
-    QSqlQuery qu(db);
+    QSqlQuery qu;
     qu.prepare("DELETE FROM Sessions "
                "WHERE expires_at < CURRENT_TIMESTAMP");
 
@@ -100,9 +95,7 @@ void SessionsRepository::deleteExpired()
         return;
     }
 
-    int affected = qu.numRowsAffected();
-
-    if(affected > 0)
+    if(int affected = qu.numRowsAffected(); affected > 0)
     {
         qDebug() << "token expired";
         emit token_expired();

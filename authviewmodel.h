@@ -21,6 +21,11 @@ public:
         as.restoreSession();
     }
 
+    Q_INVOKABLE void logoff()
+    {
+        as.logoff();
+    }
+
 signals:
     void invalidPassword();
     void invalidLogin();

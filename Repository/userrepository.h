@@ -1,8 +1,10 @@
 #ifndef USERREPOSITORY_H
 #define USERREPOSITORY_H
 
+#include "accessmanager.h"
+
 #include <QString>
-#include <QSqlDatabase>
+#include <QSet>
 
 struct User
 {
@@ -15,8 +17,8 @@ struct User
 
 class UserRepository
 {
-    QSqlDatabase db;
     User user;
+    QSet<Permissions> Permissions;
 public:
     UserRepository();
 

@@ -2,23 +2,14 @@
 #define SESSIONSREPOSITORY_H
 
 #include <QObject>
-#include <QSqlDatabase>
+// #include <QSqlDatabase>
 #include <QPair>
-
-struct Session
-{
-    int id;
-    int user_id;
-    QString token;
-    QString expires_at;
-};
 
 class SessionsRepository : public QObject
 {
     Q_OBJECT
 
-    QSqlDatabase db;
-    static Session session;
+    // QSqlDatabase db;
 
 signals:
     void token_expired();

@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS Status
 	);
 
 INSERT OR IGNORE INTO Roles (role, tag_color)
-VALUES 	('Admin', 'red'), ('Manager', 'blue'), ('Employee', 'green');
+VALUES 	('Супер-Пользователь', 'gold'), ('Администратор', '#F33A6A'), ('Менеджер', 'cyan'), ('Сотрудник', 'light green');
 
 INSERT OR IGNORE INTO Users (login, name, password_hash, role_id) 
 VALUES	('Admin', 'Ilya', '$2a$12$PoZpGMeDO.4UzW/3DjTCn.qpxcjtYaQsAq86BlN.6FrHhUd8Hnij6', 1);

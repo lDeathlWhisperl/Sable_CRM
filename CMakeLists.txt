@@ -47,9 +47,11 @@ qt_add_qml_module(appSable_CRM
         View/Components/Table.qml
         View/Components/CheckButton.qml
 
-        View/Categories/Employees.qml
         View/Categories/Main.qml
         View/Categories/Employees.qml
+        View/Categories/Settings.qml
+
+        View/Categories/Instruments/AddEmployee.qml
         View/Categories/Instruments/AddRole.qml
 
         View/Structs/Colors.qml

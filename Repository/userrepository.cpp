@@ -1,17 +1,13 @@
 #include "userrepository.h"
-#include "databasemanager.h"
 
 #include <QSqlQuery>
 #include <QSqlError>
 
-UserRepository::UserRepository()
-{
-    db = DatabaseManager::database();
-}
+UserRepository::UserRepository() { }
 
 std::optional<User> UserRepository::getUserByLogin(const QString &login)
 {
-    QSqlQuery qu(db);
+    QSqlQuery qu;
     qu.prepare(
         "SELECT * FROM Users "
         "WHERE login = :login;"
@@ -42,8 +38,7 @@ std::optional<User> UserRepository::getUserByLogin(const QString &login)
 
 bool UserRepository::createUser(const User &user)
 {
-    QSqlQuery qu(db);
-
+    QSqlQuery qu;
     qu.prepare(
         "INSERT OR IGNORE INTO Users (login, password_hash, role_id) "
         "VALUES (:login, :password, :n, :role);"
@@ -69,7 +64,7 @@ void UserRepository::updateUser(const User &user)
 
 std::optional<User> UserRepository::getUserById(int user_id)
 {
-    QSqlQuery qu(db);
+    QSqlQuery qu;
     qu.prepare("SELECT * FROM Users "
                "WHERE id = ?");
 

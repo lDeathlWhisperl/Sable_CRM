@@ -70,6 +70,11 @@ Item
         Employees {}
     }
 
+    Component
+    {
+        id: cat_settings
+        Settings {}
+    }
 
     PopupWindow
     {
